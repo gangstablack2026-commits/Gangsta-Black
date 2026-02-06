@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gangsta Black — Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="admin">
+    <header class="adminTop">
+      <a class="adminTop__brand" href="index.html">
+        <span class="logoDot">GB</span>
+        <span>GANGSTA BLACK</span>
+      </a>
+
+      <div class="adminTop__actions">
+        <button class="pill" id="btnRefresh"><i data-lucide="refresh-cw"></i><span>Refresh</span></button>
+        <button class="pill pill--lime" id="btnNew"><i data-lucide="plus"></i><span>New Product</span></button>
+      </div>
+    </header>
+
+    <!-- Login -->
+    <section class="adminCard" id="loginCard">
+      <h1 class="adminH">Admin Login</h1>
+      <p class="adminP">Enter your admin password.</p>
+      <form id="loginForm" class="adminForm">
+        <label class="adminLabel">
+          <span>Password</span>
+          <input type="password" class="input" id="adminPass" required placeholder="••••••••" />
+        </label>
+        <button class="btn btn--lime" type="submit">Login</button>
+        <p class="adminHint">Default password is <b>1234</b> — change it in Settings after login.</p>
+      </form>
+    </section>
+
+    <!-- App -->
+    <section class="adminGrid" id="adminApp" hidden>
+      <aside class="adminSide">
+        <button class="sideBtn sideBtn--active" data-tab="products"><i data-lucide="shirt"></i><span>Products</span></button>
+        <button class="sideBtn" data-tab="orders"><i data-lucide="receipt"></i><span>Orders</span><span class="badge" id="ordersBadge">0</span></button>
+        <button class="sideBtn" data-tab="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+        <div class="sideSep"></div>
+        <button class="sideBtn sideBtn--danger" id="btnLogout"><i data-lucide="log-out"></i><span>Logout</span></button>
+      </aside>
+
+      <main class="adminMain">
+        <!-- Products -->
+        <section class="panel" id="tab-products">
+          <div class="panelTop">
+            <div>
+              <h2 class="panelH">Products</h2>
+              <p class="panelP">Add / edit / delete products. Up to <b>10 images</b> per product.</p>
+            </div>
+            <div class="panelFilters">
+              <select class="select" id="filterSeason">
+                <option value="all">All Seasons</option>
+                <option value="winter">Winter</option>
+                <option value="summer">Summer</option>
+              </select>
+              <select class="select" id="filterSubcat">
+                <option value="all">All Categories</option>
+                <option value="pants">Pants</option>
+                <option value="hoodies">Hoodies (Winter)</option>
+                <option value="tshirts">T-Shirts (Summer)</option>
+                <option value="tracksuits">Tracksuits</option>
+              </select>
+              <input class="input" id="search" placeholder="Search name..." />
+            </div>
+          </div>
+
+          <div class="tableWrap">
+            <table class="table" id="productsTable">
+              <thead>
+                <tr>
+                  <th>Preview</th>
+                  <th>Name</th>
+                  <th>Season</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Discount</th>
+                  <th>Featured</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="empty" id="productsEmpty" hidden>
+              <div class="empty__title">No products yet</div>
+              <div class="empty__text">Click “New Product” to add your first product.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Orders -->
+        <section class="panel" id="tab-orders" hidden>
+          <div class="panelTop">
+            <div>
+              <h2 class="panelH">Orders</h2>
+              <p class="panelP">All orders are saved here (localStorage). Each new order also opens WhatsApp with full details.</p>
+            </div>
+            <div class="panelFilters">
+              <select class="select" id="filterStatus">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="delivered">Delivered</option>
+                <option value="canceled">Canceled</option>
+              </select>
+              <button class="pill" id="btnExport"><i data-lucide="download"></i><span>Export JSON</span></button>
+              <button class="pill pill--danger" id="btnClearOrders"><i data-lucide="trash-2"></i><span>Clear Orders</span></button>
+            </div>
+          </div>
+
+          <div class="tableWrap">
+            <table class="table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>City</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="empty" id="ordersEmpty" hidden>
+              <div class="empty__title">No orders yet</div>
+              <div class="empty__text">Orders will appear here after checkout.</div>
+            </div>
+          </div>
+
+          <div class="orderDetail" id="orderDetail" hidden></div>
+        </section>
+
+        <!-- Settings -->
+        <section class="panel" id="tab-settings" hidden>
+          <div class="panelTop">
+            <div>
+              <h2 class="panelH">Settings</h2>
+              <p class="panelP">Update contact info & admin password.</p>
+            </div>
+          </div>
+
+          <div class="settingsGrid">
+            <div class="adminCard">
+              <h3 class="adminH">Contact</h3>
+              <p class="adminP">These are shown on the store website.</p>
+              <div class="adminForm">
+                <label class="adminLabel">
+                  <span>Email</span>
+                  <input class="input" id="setEmail" value="gangsta.black2026@gmail.com" />
+                </label>
+                <label class="adminLabel">
+                  <span>Phone 2</span>
+                  <input class="input" id="setPhone2" value="0791506540" />
+                </label>
+                <label class="adminLabel">
+                  <span>WhatsApp</span>
+                  <input class="input" id="setWhats" value="0799691748" />
+                </label>
+                <button class="btn btn--lime" id="btnSaveContact" type="button">Save Contact</button>
+                <p class="adminHint">Note: This saves inside your browser (localStorage). If you host the site, you should also update the numbers in the code.</p>
+              </div>
+            </div>
+
+            <div class="adminCard">
+              <h3 class="adminH">Admin Password</h3>
+              <p class="adminP">Change your admin login password.</p>
+              <form class="adminForm" id="passForm">
+                <label class="adminLabel">
+                  <span>Current password</span>
+                  <input class="input" id="oldPass" type="password" required />
+                </label>
+                <label class="adminLabel">
+                  <span>New password</span>
+                  <input class="input" id="newPass" type="password" required minlength="4" />
+                </label>
+                <button class="btn btn--lime" type="submit">Change Password</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <!-- Product editor modal -->
+    <div class="modal" id="editorModal" hidden aria-hidden="true">
+      <div class="modal__overlay" id="editorOverlay"></div>
+      <div class="modal__sheet adminModal">
+        <div class="modal__top">
+          <button class="iconBtn" id="btnCloseEditor" aria-label="Close"><i data-lucide="x"></i></button>
+          <div class="modal__title" id="editorTitle">New Product</div>
+          <button class="pill pill--lime" id="btnSaveProduct"><i data-lucide="save"></i><span>Save</span></button>
+        </div>
+
+        <div class="adminModal__body">
+          <div class="grid2">
+            <label class="adminLabel">
+              <span>Season</span>
+              <select class="select" id="pSeason">
+                <option value="winter">Winter</option>
+                <option value="summer">Summer</option>
+              </select>
+            </label>
+
+            <label class="adminLabel">
+              <span>Category</span>
+              <select class="select" id="pSubcat">
+                <option value="pants">Pants</option>
+                <option value="hoodies">Hoodies</option>
+                <option value="tshirts">T-Shirts</option>
+                <option value="tracksuits">Tracksuits</option>
+              </select>
+            </label>
+
+            <label class="adminLabel">
+              <span>Name (EN)</span>
+              <input class="input" id="pName" placeholder="Product name" />
+            </label>
+
+            <label class="adminLabel">
+              <span>Name (AR)</span>
+              <input class="input" id="pNameAr" placeholder="اسم المنتج" />
+            </label>
+
+            <label class="adminLabel">
+              <span>Price (JOD)</span>
+              <input class="input" id="pPrice" type="number" min="0" step="0.01" placeholder="0" />
+            </label>
+
+            <label class="adminLabel">
+              <span>Original price (for discount)</span>
+              <input class="input" id="pOrig" type="number" min="0" step="0.01" placeholder="Leave empty if no discount" />
+            </label>
+
+            <label class="adminLabel adminLabel--wide">
+              <span>Description (EN)</span>
+              <textarea class="textarea" id="pDesc" rows="3" placeholder="Description"></textarea>
+            </label>
+
+            <label class="adminLabel adminLabel--wide">
+              <span>Description (AR)</span>
+              <textarea class="textarea" id="pDescAr" rows="3" placeholder="وصف المنتج"></textarea>
+            </label>
+
+            <label class="adminLabel">
+              <span>Featured</span>
+              <select class="select" id="pFeatured">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </label>
+
+            <label class="adminLabel">
+              <span>Top Slider Slot (1–3)</span>
+              <select class="select" id="pSliderSlot">
+                <option value="0">Not in slider</option>
+                <option value="1">Slot 1</option>
+                <option value="2">Slot 2</option>
+                <option value="3">Slot 3</option>
+              </select>
+            </label>
+
+            <div class="adminLabel">
+              <span>Images — max 10</span>
+              <div id="imagesList" class="imagesList"></div>
+
+              <!-- Device upload (stores as DataURL in localStorage) -->
+              <input id="imageFiles" type="file" accept="image/*" multiple hidden />
+              <div class="rowGap">
+                <button class="pill pill--lime" type="button" id="btnPickImages"><i data-lucide="image-plus"></i><span>Choose from device</span></button>
+                <button class="pill" type="button" id="btnAddImage"><i data-lucide="link"></i><span>Add by URL</span></button>
+              </div>
+              <p class="adminHint">You can pick images from your phone/PC. They will be saved inside the browser (localStorage). If you want smaller size, upload to hosting and use URL.</p>
+            </div>
+          </div>
+
+          <div class="modalActions">
+            <button class="btn btn--danger" id="btnDeleteProduct" type="button"><i data-lucide="trash-2"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="admin.js"></script>
+  <script>if(window.lucide) window.lucide.createIcons();</script>
+</body>
+</html>

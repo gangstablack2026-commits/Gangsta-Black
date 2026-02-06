@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GANGSTA BLACK</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- Top App Bar -->
+  <header class="appbar">
+    <div class="appbar__inner">
+      <button class="iconbtn" id="openMenu" aria-label="Open menu">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <div class="appbar__center">
+        <div class="appbar__logoWrap">
+          <img class="appbar__logo" src="assets/logo.jpg" alt="Gangsta Black" />
+        </div>
+      </div>
+
+      <div class="appbar__right">
+        <button class="langpill" id="toggleLang">AR</button>
+        <button class="iconbtn cartbtn" id="openCart" aria-label="Open cart">
+          <i data-lucide="shopping-cart"></i>
+          <span class="badge" id="cartBadge" hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Drawer -->
+  <div class="overlay" id="menuOverlay" hidden></div>
+  <aside class="drawer drawer--left" id="menuDrawer" aria-hidden="true">
+    <button class="iconbtn drawer__close" id="closeMenu" aria-label="Close menu">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div class="drawer__head">
+      <img class="drawer__logoImg" src="assets/logo.jpg" alt="GB" />
+      <div>
+        <div class="drawer__brand" data-i18n="brand">GANGSTA BLACK</div>
+        <div class="drawer__sub muted" data-i18n="tagline">Luxury Streetwear</div>
+      </div>
+    </div>
+
+    <nav class="drawer__nav">
+      <a href="#home" class="drawer__link" data-i18n="home">Home</a>
+      <a href="#shop" class="drawer__link" data-i18n="shop">Shop</a>
+      <a href="#checkout" class="drawer__link" data-i18n="checkout">Checkout</a>
+      <a href="#contact" class="drawer__link" data-i18n="contact">Contact</a>
+    </nav>
+
+    <div class="drawer__footer">
+      <a class="drawer__meta" href="https://instagram.com/gangsta_black26" target="_blank" rel="noopener">
+        <i data-lucide="instagram"></i><span>@gangsta_black26</span>
+      </a>
+      <a class="drawer__meta" href="tel:0799691748">
+        <i data-lucide="phone"></i><span>0799691748</span>
+      </a>
+
+      <a class="drawer__meta" href="https://wa.me/962799691748" target="_blank" rel="noopener">
+        <i data-lucide="message-circle"></i>
+        <span>WhatsApp: 0799691748</span>
+      </a>
+      <a class="drawer__meta" href="mailto:gangsta.black2026@gmail.com">
+        <i data-lucide="mail"></i><span>gangsta.black2026@gmail.com</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Cart Drawer -->
+  <div class="overlay" id="cartOverlay" hidden></div>
+  <aside class="drawer drawer--right" id="cartDrawer" aria-hidden="true">
+    <div class="drawer__header">
+      <div class="drawer__headerLeft">
+        <button class="iconbtn" id="closeCart" aria-label="Close cart">
+          <i data-lucide="x"></i>
+        </button>
+        <h2 class="drawer__title" data-i18n="cart">My Cart</h2>
+      </div>
+      <div class="drawer__hint muted" data-i18n="cod">COD</div>
+    </div>
+
+    <div class="drawer__content" id="cartItems"></div>
+
+    <div class="drawer__checkout" id="cartSummary" hidden>
+      <div class="row">
+        <span class="muted" data-i18n="subtotal">Sub total</span>
+        <strong id="subtotal">0.00 JOD</strong>
+      </div>
+      <div class="row">
+        <span class="muted" data-i18n="shipping">Shipping</span>
+        <strong id="shipping">2.00 JOD</strong>
+      </div>
+      <div class="row row--total">
+        <span data-i18n="total">Total</span>
+        <strong class="primary" id="total">0.00 JOD</strong>
+      </div>
+
+      <button class="btn btn--lime btn--full" id="goCheckout" data-i18n="checkout">Checkout</button>
+      <button class="btn btn--ghost btn--full" id="clearCart" data-i18n="clear">Clear Cart</button>
+    </div>
+  </aside>
+
+  <!-- Product Modal -->
+  <div class="modal" id="productModal" hidden aria-hidden="true">
+    <div class="modal__backdrop" id="productBackdrop"></div>
+    <div class="modal__sheet">
+      <div class="modal__top">
+        <button class="iconbtn" id="closeProduct" aria-label="Close">
+          <i data-lucide="chevron-left"></i>
+        </button>
+        <div class="modal__topTitle" data-i18n="detail">Detail</div>
+        <button class="iconbtn" id="shareBtn" aria-label="Share">
+          <i data-lucide="share-2"></i>
+        </button>
+      </div>
+
+      <div class="modal__media">
+        <img id="productImage" alt="" />
+        <button class="navbtn navbtn--left" id="prevImg" aria-label="Previous image"><i data-lucide="chevron-left"></i></button>
+        <button class="navbtn navbtn--right" id="nextImg" aria-label="Next image"><i data-lucide="chevron-right"></i></button>
+        <div class="dots" id="dots"></div>
+        <div class="chip chip--sale" id="salePill" hidden>SALE</div>
+      </div>
+
+      <div class="modal__body">
+        <div class="modal__name" id="productTitle">Title</div>
+        <div class="modal__desc muted" id="productDesc"></div>
+
+        <div class="modal__bottom">
+          <div>
+            <div class="muted tiny" data-i18n="price">Price</div>
+            <div class="priceRow">
+              <span class="price" id="productPrice">0 JOD</span>
+              <span class="priceOld" id="productOldPrice" hidden>0 JOD</span>
+            </div>
+          </div>
+
+          <div class="sizeBox" aria-label="Size">
+            <div class="muted tiny" data-i18n="size">Size</div>
+            <select id="sizeSelect" class="select sizeSelect">
+              <option value="S">S</option>
+              <option value="M" selected>M</option>
+              <option value="L">L</option>
+            </select>
+          </div>
+
+          <button class="btn btn--lime" id="addToCartBtn" data-i18n="buyNow">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="screen" id="home">
+    <!-- Hero / Quick actions -->
+    <section class="heroCard">
+      <div class="heroCard__top">
+        <div class="heroCard__title" data-i18n="discover">Discover</div>
+        <div class="heroCard__sub muted" data-i18n="subtitle">Limited drops • Street luxury</div>
+      </div>
+
+      <!-- Top slider (3 products) -->
+      <div class="heroSlider" aria-label="Top products">
+        <button class="heroSlider__nav heroSlider__nav--left" id="heroPrev" aria-label="Previous">
+          <i data-lucide="chevron-left"></i>
+        </button>
+        <button class="heroSlider__nav heroSlider__nav--right" id="heroNext" aria-label="Next">
+          <i data-lucide="chevron-right"></i>
+        </button>
+        <div class="heroSlider__track" id="heroTrack"></div>
+        <div class="heroSlider__dots" id="heroDots"></div>
+      </div>
+
+      <!-- Discover slots (1 / 2 / 3) -->
+      <div class="quickRow" id="discoverSlots" aria-label="Discover slots"></div>
+    </section>
+
+    <!-- Popular products -->
+    <section class="section">
+      <div class="section__head">
+        <div class="section__title" data-i18n="popularProducts">POPULAR PRODUCTS</div>
+        <div class="chip muted" id="countChip">0 items</div>
+      </div>
+
+      <div class="cardsGrid" id="productsGrid"></div>
+    </section>
+
+    <!-- Shop (Season + Subcategories) -->
+    <section class="section" id="shop">
+      <div class="section__head">
+        <div class="section__title" data-i18n="explore">EXPLORE</div>
+      </div>
+
+      <div class="segmented" id="seasonTabs"></div>
+      <div class="pills" id="subcatPills"></div>
+
+      <div class="cardsGrid" id="shopGrid"></div>
+    </section>
+
+    <!-- Checkout -->
+    <section class="section" id="checkout">
+      <div class="section__head">
+        <div class="section__title" data-i18n="checkout">CHECKOUT</div>
+      </div>
+
+      <div id="checkoutEmpty" class="empty" hidden>
+        <i data-lucide="shopping-cart"></i>
+        <p class="muted" id="emptyText">Your cart is empty</p>
+        <button class="btn btn--lime" data-scroll="#shop" data-i18n="continueShop">Continue Shopping</button>
+      </div>
+
+      <div id="checkoutBox" class="card" hidden>
+        <div class="card__block" id="checkoutSummary"></div>
+
+        <form class="form" id="checkoutForm">
+          <div class="grid2">
+            <input required id="name" type="text" placeholder="Full Name" />
+            <input required id="phone" type="tel" placeholder="Phone (07XXXXXXXX)" />
+            <input required id="phone2" type="tel" placeholder="Backup Phone" />
+            <input required id="city" type="text" placeholder="City" />
+          </div>
+
+          <input required id="address" type="text" placeholder="Full Address" />
+          <textarea id="notes" rows="3" placeholder="Notes (optional)"></textarea>
+
+          <button class="btn btn--lime btn--full" type="submit" data-i18n="placeOrder">
+            Confirm Order
+          </button>
+
+          <div class="payNote">
+            <div class="muted" data-i18n="codNote">الدفع عند الاستلام • معاينة قبل الاستلام</div>
+          </div>
+
+          <p class="hint muted" id="phoneHint">Phone format: 07XXXXXXXX</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="section__head">
+        <div class="section__title" data-i18n="contact">CONTACT</div>
+      </div>
+
+      <div class="infoCards">
+        <a class="infoCard" href="https://instagram.com/gangsta_black26" target="_blank" rel="noopener">
+          <i data-lucide="instagram"></i>
+          <div>
+            <div class="infoCard__t">Instagram</div>
+            <div class="muted">@gangsta_black26</div>
+          </div>
+        </a>
+
+        <a class="infoCard" href="tel:0799691748">
+          <i data-lucide="phone"></i>
+          <div>
+            <div class="infoCard__t" data-i18n="phoneLabel">Phone</div>
+            <div class="muted">0799691748</div>
+          </div>
+        </a>
+
+        <a class="infoCard" href="https://wa.me/962799691748" target="_blank" rel="noopener">
+          <i data-lucide="message-circle"></i>
+          <div>
+            <div class="infoCard__t">WhatsApp</div>
+            <div class="muted">0799691748</div>
+          </div>
+        </a>
+
+        <a class="infoCard" href="tel:0791506540">
+          <i data-lucide="phone"></i>
+          <div>
+            <div class="infoCard__t" data-i18n="phone2Label">Backup Phone</div>
+            <div class="muted">0791506540</div>
+          </div>
+        </a>
+
+        <a class="infoCard" href="mailto:gangsta.black2026@gmail.com">
+          <i data-lucide="mail"></i>
+          <div>
+            <div class="infoCard__t">Email</div>
+            <div class="muted break">gangsta.black2026@gmail.com</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="spacer"></div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottomNav">
+    <button class="bottomNav__item active" data-scroll="#home">
+      <i data-lucide="home"></i>
+      <span data-i18n="home">Home</span>
+    </button>
+    <button class="bottomNav__item" data-scroll="#shop">
+      <i data-lucide="compass"></i>
+      <span data-i18n="shop">Shop</span>
+    </button>
+    <button class="bottomNav__item" id="openCart2">
+      <i data-lucide="shopping-bag"></i>
+      <span data-i18n="cart">Cart</span>
+      <span class="miniBadge" id="miniBadge" hidden>0</span>
+    </button>
+    <button class="bottomNav__item" data-scroll="#contact">
+      <i data-lucide="message-circle"></i>
+      <span data-i18n="contact">Contact</span>
+    </button>
+  </nav>
+
+  <script src="sync-config.js"></script>
+  <script src="sync-store.js"></script>
+  <script src="app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

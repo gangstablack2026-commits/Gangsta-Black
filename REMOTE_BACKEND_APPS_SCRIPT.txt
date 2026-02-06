@@ -1,0 +1,57 @@
+Google Apps Script backend (recommended)
+--------------------------------------
+
+1) Go to: script.google.com
+2) New project -> paste the code below in Code.gs
+3) Deploy -> New deployment -> "Web app"
+   - Execute as: Me
+   - Who has access: Anyone
+4) Copy the Web app URL and paste it in sync-config.js -> REMOTE_STORE_URL
+5) (Optional) Set TOKEN below and also set REMOTE_STORE_TOKEN in sync-config.js
+
+Code.gs
+-------
+const TOKEN = ""; // optional shared secret
+
+function doGet(e){
+  const props = PropertiesService.getScriptProperties();
+  const products = JSON.parse(props.getProperty('products') || '[]');
+  const orders = JSON.parse(props.getProperty('orders') || '[]');
+  const contact = JSON.parse(props.getProperty('contact') || '{}');
+  const updatedAt = Number(props.getProperty('updatedAt') || 0);
+  return json_({ products, orders, contact, updatedAt });
+}
+
+function doPost(e){
+  let body = {};
+  try{ body = JSON.parse(e.postData.contents || '{}'); }catch(err){ body = {}; }
+  if(TOKEN && body.token !== TOKEN) return json_({ ok:false, error:'unauthorized' });
+
+  const props = PropertiesService.getScriptProperties();
+  const action = String(body.action || '');
+  const payload = body.payload;
+
+  if(action === 'setProducts'){
+    props.setProperty('products', JSON.stringify(payload || []));
+  } else if(action === 'setOrders'){
+    props.setProperty('orders', JSON.stringify(payload || []));
+  } else if(action === 'setContact'){
+    props.setProperty('contact', JSON.stringify(payload || {}));
+  } else if(action === 'appendOrder'){
+    const orders = JSON.parse(props.getProperty('orders') || '[]');
+    orders.push(payload || {});
+    props.setProperty('orders', JSON.stringify(orders));
+  } else {
+    return json_({ ok:false, error:'unknown action' });
+  }
+
+  const updatedAt = Date.now();
+  props.setProperty('updatedAt', String(updatedAt));
+  return json_({ ok:true, updatedAt });
+}
+
+function json_(obj){
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
